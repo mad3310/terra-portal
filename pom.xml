@@ -1,0 +1,317 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.le.matrix.redis</groupId>
+    <artifactId>terra-portal</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>war</packaging>
+    
+    <description>
+        redis接入 用户端模块
+    </description>
+
+    <profiles>
+	    <profile>
+	        <id>local</id>
+	        <activation>
+	            <activeByDefault>true</activeByDefault>
+	        </activation>
+	        <properties>
+	        	<dubbo.registry.zkAddr>127.0.0.1:2181</dubbo.registry.zkAddr>
+	        	
+	            <terra.portal.http>http://redis.matrix.lecloud.com:8889</terra.portal.http>
+	            <dubbo.protocol.port.dubbo>20881</dubbo.protocol.port.dubbo>
+	            <dubbo.protocol.port.rest>8888</dubbo.protocol.port.rest>
+	            <oauth.auth.http>https://login.lecloud.com</oauth.auth.http>
+	
+	            <webportal.errormail.to>lisuxiao@le.com</webportal.errormail.to>
+	            <service.notice.email.to>lisuxiao@le.com</service.notice.email.to>
+	            <service.operation.notice.email.to>lisuxiao@le.com</service.operation.notice.email.to>
+	            <start.timing.jobs>N</start.timing.jobs>
+	
+	            <webportal.log.path>D:</webportal.log.path>
+	
+	            <task.executor.size>30</task.executor.size>
+	
+	            <com.letv.cache.implStyle>Local</com.letv.cache.implStyle>
+	
+	        </properties>
+	    </profile>
+	
+	    <profile>
+	        <id>test</id>
+	        <properties>
+	        	<dubbo.registry.zkAddr>10.185.81.160:2181,10.185.81.240:2181,10.185.81.244:2181</dubbo.registry.zkAddr>
+	        	
+	            <terra.portal.http>http://redis.test.matrix.lecloud.com</terra.portal.http>
+	            <dubbo.protocol.port.dubbo>20881</dubbo.protocol.port.dubbo>
+	            <dubbo.protocol.port.rest>8080</dubbo.protocol.port.rest>
+	            <oauth.auth.http>https://login.lecloud.com</oauth.auth.http>
+	
+	            <webportal.errormail.to>lisuxiao@le.com;linzhanbo@le.com;zhangtao8@le.com</webportal.errormail.to>
+	            <service.notice.email.to>lisuxiao@le.com;linzhanbo@le.com;zhangtao8@le.com</service.notice.email.to>
+	            <service.operation.notice.email.to>lisuxiao@le.com;linzhanbo@le.com;zhangtao8@le.com</service.operation.notice.email.to>
+	            <start.timing.jobs>N</start.timing.jobs>
+	
+	            <webportal.log.path>/var/log</webportal.log.path>
+	
+	            <task.executor.size>30</task.executor.size>
+	
+	            <com.letv.cache.implStyle>Local</com.letv.cache.implStyle>
+	        </properties>
+	    </profile>
+	
+	    <profile>
+	        <id>production</id>
+	        <properties>
+	        	<dubbo.registry.zkAddr>10.180.82.228:2181,10.180.82.118:2181,10.180.91.13:2181</dubbo.registry.zkAddr>
+	        	
+	            <terra.portal.http>http://redis.matrix.lecloud.com</terra.portal.http>
+	            <dubbo.protocol.port.dubbo>20881</dubbo.protocol.port.dubbo>
+	            <dubbo.protocol.port.rest>8080</dubbo.protocol.port.rest>
+	            <oauth.auth.http>https://login.lecloud.com</oauth.auth.http>
+	            
+	            <!-- 使用邮件组无法识别，暂时使用邮箱名 -->
+	            <webportal.errormail.to>lisuxiao@le.com;linzhanbo@le.com;zhoubingzheng@le.com</webportal.errormail.to>
+	            <service.notice.email.to>lisuxiao@le.com;linzhanbo@le.com;zhoubingzheng@le.com</service.notice.email.to>
+	            <service.operation.notice.email.to>lisuxiao@le.com;linzhanbo@le.com;zhoubingzheng@le.com</service.operation.notice.email.to>
+	            <start.timing.jobs>N</start.timing.jobs>
+	
+	            <webportal.log.path>/var/log</webportal.log.path>
+	
+	            <task.executor.size>150</task.executor.size>
+	
+	            <com.letv.cache.implStyle>Remote</com.letv.cache.implStyle>
+	
+	        </properties>
+	    </profile>
+    </profiles>
+
+    <organization>
+        <name>LeCloud Software, Inc.</name>
+        <url>http://lecloud.com/</url>
+    </organization>
+    <scm>
+        <url>http://git.letv.cn/le_matrix/terra-portal.git</url>
+    </scm>
+    <prerequisites>
+        <!--maven版本限制-->
+        <maven>3.0.0</maven>
+    </prerequisites>
+
+    <developers>
+        <developer>
+            <id>linzhanbo</id>
+            <name>linzhanbo</name>
+            <email>linzhanbo@le.com</email>
+            <organization>LeCloud Software, Inc.</organization>
+            <organizationUrl>http://lecloud.com/</organizationUrl>
+            <roles>
+                <role>Project lead</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>lisuxiao</id>
+            <name>lisuxiao</name>
+            <email>lisuxiao@letv.com</email>
+            <organization>LeCloud Software, Inc.</organization>
+            <organizationUrl>http://lecloud.com/</organizationUrl>
+            <roles>
+                <role>Project lead</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <parent>
+        <groupId>com.le.matrixframework</groupId>
+        <artifactId>matrix-starter-parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+
+        </dependencies>
+    </dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>com.le.matrixframework</groupId>
+            <artifactId>matrix-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.le.matrix.redis</groupId>
+            <artifactId>terra-facade</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <!-- RSS -->
+        <dependency>
+            <groupId>net.java.dev.rome</groupId>
+            <artifactId>rome</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <!-- pdf -->
+        <dependency>
+            <groupId>com.lowagie</groupId>
+            <artifactId>itext</artifactId>
+            <version>2.1.5</version>
+        </dependency>
+        <!-- xls -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.10-beta2</version>
+        </dependency>
+        
+        
+        <dependency>
+            <groupId>janino</groupId>
+            <artifactId>janino</artifactId>
+            <version>2.5.10</version>
+        </dependency>
+		
+		<dependency>
+		  	<groupId>com.letv.cloudplatform</groupId>
+		  	<artifactId>webportal-common</artifactId>
+		  	<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+		  	<groupId>com.letv.cloudplatform</groupId>
+		  	<artifactId>webportal-cache-client</artifactId>
+		  	<version>1.0-SNAPSHOT</version>
+		</dependency>
+    </dependencies>
+    <build>
+        <finalName>terra-portal</finalName>
+        <plugins>
+            <!--jdk版本>=1.7-->
+            <!--dubbox 需要在JDK 1.7以上运行-->
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+            <!--配置运行Main函数
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <addMavenDescriptor>true</addMavenDescriptor>
+                        <manifest>
+                            <mainClass>com.alibaba.dubbo.container.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>-->
+            <!--jetty容器-->
+            <plugin>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>maven-jetty-plugin</artifactId>
+                <version>6.1.9</version>
+                <configuration>
+                    <contextPath>/</contextPath>
+                    <scanIntervalSeconds>3</scanIntervalSeconds>
+                    <connectors>
+                        <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+                            <port>8889</port>
+                        </connector>
+                    </connectors>
+                    <scanTargetPatterns>
+                        <scanTargetPattern>
+                            <directory>src/main/webapp/WEB-INF</directory>
+                            <excludes>
+                                <exclude>**/*.jsp</exclude>
+                            </excludes>
+                            <includes>
+                                <include>**/*.properties</include>
+                                <include>**/*.xml</include>
+                            </includes>
+                        </scanTargetPattern>
+                    </scanTargetPatterns>
+                </configuration>
+            </plugin>
+        </plugins>
+        
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>**/.git/**</exclude>
+                </excludes>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <excludes>
+                    <exclude>**/.git/**</exclude>
+                </excludes>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
+    </build>
+    <!--私有仓库配置  begin-->
+    <repositories>
+        <!--私有仓库 url-->
+        <repository>
+            <id>Matrix-Thirdparty repository</id>
+            <name>Letv.com Repository</name>
+            <url>http://maven.letv.cn/nexus/content/repositories/Matrix-Thirdparty/</url>
+        </repository>
+        <repository>
+            <id>Matrix-Snapshot repository</id>
+            <name>Letv.com Repository</name>
+            <url>http://maven.letv.cn/nexus/content/repositories/Matrix-Snapshot/</url>
+        </repository>
+        <repository>
+            <id>Matrix-Release repository</id>
+            <name>Letv.com Repository</name>
+            <url>http://maven.letv.cn/nexus/content/repositories/Matrix-Release/</url>
+        </repository>
+        <repository>
+            <id>letv.public repository</id>
+            <name>Letv.com Repository</name>
+            <url>http://maven.letv.cn/nexus/content/groups/public/</url>
+        </repository>
+    </repositories>
+    <!--私有仓库配置  end-->
+    <!--私有插件配置 begin-->
+    <pluginRepositories>
+        <!--私有仓库插件 url-->
+        <pluginRepository>
+            <id>letv.public plugin</id>
+            <name>Letv.com Repository</name>
+            <url>http://maven.letv.cn/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+    <!--deploy begin-->
+    <distributionManagement>
+        <!--deploy url-->
+        <repository>
+            <id>project-release</id>
+            <name>Projects Release repository</name>
+            <url>http://maven.letv.cn/nexus/content/repositories/Matrix-Release/</url>
+        </repository>
+        <snapshotRepository>
+            <id>project-snapshots</id>
+            <name>Projects SnapShot repository</name>
+            <url>http://maven.letv.cn/nexus/content/repositories/Matrix-Snapshot/</url>
+        </snapshotRepository>
+    </distributionManagement>
+    <!--deploy end-->
+</project>

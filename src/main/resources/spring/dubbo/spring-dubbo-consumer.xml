@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://code.alibabatech.com/schema/dubbo
+       http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+       
+    <!-- 提供方应用信息，用于计算依赖关系 -->
+    <dubbo:application name="terra-portal" owner="matrix" organization="le"/>
+    <!-- 使用zookeeper注册中心暴露服务地址 -->
+    <dubbo:registry protocol="zookeeper" address="${dubbo.registry.zkAddr}" />
+    
+    <!--服务引用列表-->
+    <!--关于reference属性配置看http://dubbo.io/User+Guide-zh.htm#UserGuide-zh-%253Cdubbo%253Areference%252F%253E-->
+    
+    <!-- 调用UserFacade服务
+    	 	interface     服务接口名
+         	id            服务引用BeanId
+         	check         启动时检查提供者是否存在，true报错，false忽略
+    		protocol      指定使用协议 如果服务提供多个协议支持，消费端必须指定使用协议
+    		group         服务分组，当一个接口有多个实现，可以用分组区分，必需和服务提供方一致
+           	retries       远程服务调用重试次数，不包括第一次调用，不需要重试请设为0
+           	version       服务版本，与服务提供者的版本一致
+           	url           点对点直连服务提供者地址，将绕过注册中心        调试时候经常使用，线上不要用，否则不会注册众测中心，也不会有负载等等功能
+    -->
+    <dubbo:reference interface="com.le.matrix.redis.facade.IDemoService" id="demoService" check="false" protocol="dubbo"/>
+    <dubbo:reference interface="com.le.matrix.redis.facade.ILoginService" id="loginService" check="false" protocol="dubbo" timeout="5000" retries="0"/>
+    <dubbo:reference interface="com.le.matrix.redis.facade.IRedisService" id="redisService" check="false" protocol="dubbo" timeout="10000" retries="0"/>
+</beans>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <description>系统Spring全局配置</description>
+    
+    <import resource="classpath:common-applicationContext.xml" />
+    <import resource="classpath:freemarker-applicationContext.xml" />
+    <import resource="spring-email.xml"/>
+
+    <!-- 采用注释的方式配置bean -->
+    <context:annotation-config/>
+    <!-- 配置要扫描的包 -->
+    <context:component-scan base-package="com.le.matrix.redis"/>
+    <context:component-scan base-package="com.letv.portal"/>
+	
+    <!-- 读入配置属性文件 -->
+    <context:property-placeholder location="classpath:config.properties"/>
+    <!--<context:property-placeholder location="classpath:config.properties,classpath:db.properties"/>-->
+    <!-- 读入配置属性文件 -->
+    <!--
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    	<property name="location" value="classpath:jdbc.properties" />
+    </bean>
+    -->
+    
+    <!--全局异常捕获处理定义-->
+    <bean id="exceptionResolver"
+          class="com.le.matrix.redis.rest.resolver.RestAPIExceptionResolver">
+           <property name="exceptionMappings">
+                  <props>
+                         <prop key="java.lang.Exception">error/warn</prop>
+                  </props>
+           </property>
+    </bean>
+    
+    <!-- proxy-target-class默认"false",更改为"ture"使用CGLib动态代理 -->
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+
+    <import resource="classpath*:spring/dubbo/spring-*.xml"/>
+</beans>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
+
+    <description>系统SpringMVC全局配置</description>
+
+    <!--配置要扫描的包，使SpringMVC对所有标注注解@controller的控制器下注解做进一步支持-->
+    <context:component-scan base-package="com.le.matrix.redis.controller"/>
+    <context:property-placeholder location="classpath:config.properties"/>
+    
+    <!--对静态文件的处理直接使用直接使用Jetty容器的defaultServlet，详细看web.xml配置-->
+
+    <!--避免IE执行AJAX时，返回JSON出现下载文件 -->
+    <bean id="mappingJacksonHttpMessageConverter"
+          class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list>
+                <value>text/html;charset=UTF-8</value>
+            </list>
+        </property>
+    </bean>
+    <!--添加SpingMVC请求参数校验，并激活使用hibernate validator-->
+    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+        <property name="providerClass" value="org.hibernate.validator.HibernateValidator"/>
+    </bean>
+    <bean id="webBindingInitializer" class="org.springframework.web.bind.support.ConfigurableWebBindingInitializer">
+        <property name="validator" ref="validator"/>
+    </bean>
+    
+    <!--拦截器定义-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <bean class="com.le.matrix.redis.interceptor.SessionTimeoutInterceptor">
+                <property name="allowUrls">
+                    <list>
+                        <value>/oauth/callback</value>
+	          			<value>/logout</value>
+                		<value>/toLogin</value>
+                		<value>/login</value>
+                		<value>/static</value>
+                		<value>/home</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+    <import resource="spring-mvc-resolver.xml"/>
+    <!--静态文件默认处理定义-->
+    <!--和web.xml中激活激活Jetty容器的defaultServlet配置组合使用-->
+    <mvc:default-servlet-handler/>
+    <!--默认视图定义-->
+    <mvc:view-controller path="/" view-name="redirect:/index"/>
+</beans>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+
+    <display-name>terra-portal前端系统</display-name>
+    <!--dubbox Rest服务-->
+    <!--该listener必须在Spring listener之前定义-->
+    <listener>
+        <listener-class>com.alibaba.dubbo.remoting.http.servlet.BootstrapListener</listener-class>
+    </listener>
+    <servlet>
+        <servlet-name>dubbox-dispatcher</servlet-name>
+        <servlet-class>com.alibaba.dubbo.remoting.http.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <!--配置所有Dubbox Rest服务以ip:port/services/打头-->
+    <servlet-mapping>
+        <servlet-name>dubbox-dispatcher</servlet-name>
+        <url-pattern>/services/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- Spring listener -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:spring/spring-context.xml</param-value>
+    </context-param>
+
+    <!--字符编码统一-->
+    <filter>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!--logback-->
+    <context-param>
+        <param-name>logbackConfigLocation</param-name>
+        <param-value>/WEB-INF/classes/logback.xml</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>logbackRefreshInterval</param-name>
+        <param-value>6000</param-value>
+    </context-param>
+
+    <!--激活Jetty容器的defaultServlet来处理静态文件-->
+    <!--
+        该段文件过滤要写在配置SpringMVC的DispatcherServlet的前面， 让中间件容器defaultServlet先拦截，这样就不会进入Spring。
+
+        由于SpringMVC处理所有的请求/，如果是处理*.do后缀请求，则不需要处理过滤静态文件，也不需要这段代码。
+        该办法是过滤静态文件性能最好的办法，但是对于未定义的文件，直接提示not found。
+        其他的办法如：
+        <mvc:resources mapping="/images/**" location="/images/" /> order 属性值是： 2147483646，
+        或者<mvc:default-servlet-handler/> order 属性值是：2147483647
+        spring 会先执行 order 值小的。
+        最优组合方法：同时使用激活Jetty容器的defaultServlet来处理静态文件和下面两种办法之一，若容器以过滤，则不走Spring，未过滤
+        后缀则会走Spring，先拦截器拦截，再默认静态文件处理
+    -->
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.jpg</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.gif</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.png</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.js</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.css</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.tff</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.woff</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.ico</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.json</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.swf</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.svg</url-pattern>
+    </servlet-mapping>
+    <!--springmvc-->
+    <servlet>
+        <servlet-name>springmvc-dispatcher</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:spring/spring-mvc.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <!--拦截所有请求，包括js/css等静态资源-->
+    <servlet-mapping>
+        <servlet-name>springmvc-dispatcher</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+    <!--springmvc Rest服务支持-->
+    <filter>
+        <filter-name>HiddenHttpMethodFilter</filter-name>
+        <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>HiddenHttpMethodFilter</filter-name>
+        <servlet-name>springmvc-dispatcher</servlet-name>
+    </filter-mapping>
+
+    <!--Session过期时间-->
+    <session-config>
+        <session-timeout>600</session-timeout>
+    </session-config>
+
+    <!--错误定义-->
+    <!--TODO 该部分定义需区分无界面API系统和有界面系统，无界面系统/404可能返回json/xml等格式数据，
+    有界面系统/404可能重定向到某个jsp/html，也可能再次处理404请求，最终返回界面。-->
+    <!--根据HTTP状态码声明错误-->
+    <!--<error-page>
+        <error-code>404</error-code>
+        <location>/404</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/error.jsp</location>
+    </error-page>-->
+    <!--根据异常类声明错误-->
+    <!--<error-page>
+        <exception-type>java.lang.Throwable</exception-type>
+        <location>/500.jsp</location>
+    </error-page>-->
+</web-app>
